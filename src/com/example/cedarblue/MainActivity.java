@@ -23,6 +23,7 @@ public class MainActivity extends Activity {
 	
 	public void connect() {
 		System.out.println("We're starting!");
+		System.out.println("lol");
 	}
 
 }

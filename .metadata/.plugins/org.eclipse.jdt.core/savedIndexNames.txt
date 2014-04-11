@@ -1,0 +1,1 @@
+INDEX VERSION 1.126+/home/evan/My Documents/My Documents/School/Augustana Junior Year/CSC-490/cedar-blue-client/.metadata/.plugins/org.eclipse.jdt.core
