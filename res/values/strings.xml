@@ -4,5 +4,11 @@
     <string name="app_name">CedarBlue</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="welcome">Welcome! Check out a category</string>
+    <string name="food_button">Food</string>
+    <string name="sport_button">Sport</string>
+    <string name="greek_button">Greek</string>
+    <string name="other_button">Other</string>
+    <string name="study_button">Studying</string>
 
 </resources>
