@@ -10,5 +10,6 @@
     <string name="greek_button">Greek</string>
     <string name="other_button">Other</string>
     <string name="study_button">Studying</string>
+    <string name="submit_button">&quot;Submit&quot;</string>
 
 </resources>
