@@ -24,6 +24,7 @@ import java.util.*;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
@@ -34,13 +35,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class TopicBoardActivity extends Activity implements View.OnClickListener {
-	public JSONArray jArray;
-	public String topicString;
-	public TextView text1;
-	public TextView text2;
-	public TextView text3;
-	public TextView text4;
-	public TextView text5;
+	public String getUrl = "http://10.100.31.21/cblue/getPostsFromDB.php";
+	public String insertUrl = "http://10.100.31.21/cblue/insertPostsIntoDB.php";
+	public static JSONArray jArray;
+	public static String topicString;
+	public static TextView text1;
+	public static TextView text2;
+	public static TextView text3;
+	public static TextView text4;
+	public static TextView text5;
 	public TextView header;
 	public EditText textBox;
 	public Button homeButton;
@@ -75,31 +78,47 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
         header = (TextView) findViewById(R.id.textView6);
         textBox = (EditText) findViewById(R.id.editText1);
         
-        //Log.e("log_tag", "Text 1: " + text1 + "\nText 2: " + text2
-        //		+ "\nText 3: " + text3 + "\nText 4" + text4);
+        Log.e("log_tag", "Text 1: " + text1 + "\nText 2: " + text2
+        		+ "\nText 3: " + text3 + "\nText 4" + text4 + "\n text5" + text5
+        		+ "\nHeader" + header + "\nTextBox" + textBox);
         
         homeButton.setOnClickListener(this);
         submitButton.setOnClickListener(this);
         text1.setOnClickListener(this);
         
-        try {
-			getPosts();
+        getPosts(getUrl);
+        
+        if(getUrl == null) {
+        	Toast.makeText(getApplicationContext(), "geturl is null in onCreate ", Toast.LENGTH_LONG).show();
+        } else {
+        	Toast.makeText(getApplicationContext(), "geturl is -NOT- null in onCreate ", Toast.LENGTH_LONG).show();
+        }
+        
+        if(jArray == null) {
+        	Toast.makeText(getApplicationContext(), "jArray is null in onCreate ", Toast.LENGTH_LONG).show();
+        } else {
+        	Toast.makeText(getApplicationContext(), "jArray is -NOT- null in onCreate ", Toast.LENGTH_LONG).show();
+        }
+        
+        /*try {
 			text1.setText("" + jArray.get(0));
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
         
         
 	}
 	
 	
-	@SuppressLint("NewApi")
-	public void getPosts() throws JSONException {
-		try {
+	public void getPosts(String url) {
 		// Create a new HttpClient and Post Header
-	    HttpClient httpclient = new DefaultHttpClient();
-	    HttpPost httppost = new HttpPost("http://10.100.31.21/cblue/getPostsFromDB.php");
+		
+		GetJSONArrayTask JSONArrayTask = new GetJSONArrayTask();
+		JSONArrayTask.execute(url);
+		
+			/*HttpClient httpclient = new DefaultHttpClient();
+			HttpPost httppost = new HttpPost("http://10.100.31.21/cblue/getPostsFromDB.php");
 	    
 	        // Bind values with List
 	        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
@@ -131,7 +150,7 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
 				 *  We now have the data in a JSONArray. We will use this JSONArray to populate TextViews
 				 *  with messages.
 				 */
-	            jArray = new JSONArray(result);
+	            /*jArray = new JSONArray(result);
 	            
 				//Toast.makeText(getApplicationContext(), "" + jObject.getString("message"), Toast.LENGTH_LONG).show();
 				Log.e("log_tag", "JSON at 0: " + jArray.getString(0));
@@ -148,11 +167,7 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
 	    	e.printStackTrace();
 	    } catch (NullPointerException e) {
 	    	e.printStackTrace();
-	    }
-	}
-	
-	public void populateTextViews() {
-		
+	    }*/
 	}
 	
 	
@@ -173,13 +188,31 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
 			String userPost = textBox.getText().toString();
 			Toast.makeText(getApplicationContext(), "User Post: " + userPost, Toast.LENGTH_LONG).show();
 			
+			/*
+			 * insert the text in textBox to the database
+			 */
+			InsertMessageTask insertTask = new InsertMessageTask();
+			insertTask.execute(insertUrl, userPost);
+			
+			// clear the textBox
+			textBox.setText("");
+			
+		}
+		
+	}
+	
+	public static class GetJSONArrayTask extends AsyncTask<String, Integer, JSONArray>{
+		@Override
+		protected JSONArray doInBackground(String... params) {
+			// TODO Auto-generated method stub
+			String url = params[0];
+			
 			try {
-				// Create a new HttpClient and Post Header
-			    HttpClient httpclient = new DefaultHttpClient();
-			    HttpPost httppost = new HttpPost("http://10.100.31.21/cblue/insertPostsIntoDB.php");
-			     // Bind values with List
+				HttpClient httpclient = new DefaultHttpClient();
+				HttpPost httppost = new HttpPost(url);
+		    
+		        // Bind values with List
 		        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-		        nameValuePairs.add(new BasicNameValuePair("content", userPost));
 		        nameValuePairs.add(new BasicNameValuePair("topic", topicString));
 		        
 		        // Encode values on URL entity
@@ -202,7 +235,6 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
 					is.close();
 					
 					String result = sb.toString();
-					Log.e("log_tag", "Result: " + result);
 					
 					/*
 					 *  Instantiate JSONArray with our String
@@ -210,15 +242,8 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
 					 *  with messages.
 					 */
 		            jArray = new JSONArray(result);
-		            populateTextViews();
-					Log.e("log_tag", "JSONArray: " + jArray.toString());
-					//Toast.makeText(getApplicationContext(), "" + jObject.getString("message"), Toast.LENGTH_LONG).show();
-					Log.e("log_tag", "JSON at 0: " + jArray.get(0));
 		        }
-		        
-		    } catch (NullPointerException e) {
-		    	e.printStackTrace();
-		    } catch (UnsupportedEncodingException e) {
+			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
@@ -227,8 +252,67 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
 			} catch (JSONException e) {
 				e.printStackTrace();
 			} 
+			// This jArray goes to onPostExecute
+			return jArray;
 		}
-		
+
+		protected void onPostExecute(JSONArray result) {
+	         //showDialog("Downloaded " + result + " bytes");
+			Log.e("log_tag", "JSONArray jArray: " + jArray.toString());
+			Log.e("log_tag", "JSONArray result: " + result.toString());
+			
+			try {
+				Log.e("log_tag", "JSONArray[0]: " + result.get(0));
+				text1.setText("" + jArray.get(0));
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	     }
+	}
+	
+	
+	public static class InsertMessageTask extends AsyncTask<String, Integer, JSONArray>{
+
+		@Override
+		protected JSONArray doInBackground(String... params) {
+			// url specific to PHP insert file
+			String url = params[0];
+			// text which user typed into textBox
+			String message = params[1];
+			
+			Log.e("log_tag", "params[1]: " + params[1]);
+
+			List<NameValuePair> values = new ArrayList<NameValuePair>();
+			values.add(new BasicNameValuePair("topic", topicString));
+			values.add(new BasicNameValuePair("message", message));
+
+			HttpClient httpclient = new DefaultHttpClient();
+			HttpPost httppost = new HttpPost(url);
+
+			try {
+				httppost.setEntity(new UrlEncodedFormEntity(values));
+				httpclient.execute(httppost);
+			} catch (ClientProtocolException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return jArray;
+		}
+
+
+		protected void onPostExecute(JSONArray result) {
+	         //showDialog("Downloaded " + result + " bytes");
+			/*
+			 * This is where we should use the JSONArray to populate the text fields
+			 */
+	     }
+
+
+
 	}
 	
 	
