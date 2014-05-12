@@ -55,18 +55,10 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.layout_topicboard);
-	    
-	    /*
-		 * Rather than create an AsyncTask to connect over HTTP, I just want to do it here
-		 * as a demo. This is a quick hack that allows the UI thread to use HTTP
-		 */
-	    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-	    StrictMode.setThreadPolicy(policy); 
 	
-	    // Get the most recent posts for this topic, store in jArray
+	    // Get the topicString which tells us which topic we are in
 	    Bundle nameHashMap = this.getIntent().getExtras();
         topicString = nameHashMap.getString("topicString");
-        Toast.makeText(getApplicationContext(), "Topic: " + topicString, Toast.LENGTH_LONG).show();
         
         homeButton = (Button) findViewById(R.id.button2);
         submitButton = (Button) findViewById(R.id.button1);
@@ -78,96 +70,14 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
         header = (TextView) findViewById(R.id.textView6);
         textBox = (EditText) findViewById(R.id.editText1);
         
-        Log.e("log_tag", "Text 1: " + text1 + "\nText 2: " + text2
-        		+ "\nText 3: " + text3 + "\nText 4" + text4 + "\n text5" + text5
-        		+ "\nHeader" + header + "\nTextBox" + textBox);
+        header.setText(topicString);
         
         homeButton.setOnClickListener(this);
         submitButton.setOnClickListener(this);
-        text1.setOnClickListener(this);
         
-        getPosts(getUrl);
+        GetJSONArrayTask JSONArrayTask = new GetJSONArrayTask();
+        JSONArrayTask.execute(getUrl);
         
-        if(getUrl == null) {
-        	Toast.makeText(getApplicationContext(), "geturl is null in onCreate ", Toast.LENGTH_LONG).show();
-        } else {
-        	Toast.makeText(getApplicationContext(), "geturl is -NOT- null in onCreate ", Toast.LENGTH_LONG).show();
-        }
-        
-        if(jArray == null) {
-        	Toast.makeText(getApplicationContext(), "jArray is null in onCreate ", Toast.LENGTH_LONG).show();
-        } else {
-        	Toast.makeText(getApplicationContext(), "jArray is -NOT- null in onCreate ", Toast.LENGTH_LONG).show();
-        }
-        
-        /*try {
-			text1.setText("" + jArray.get(0));
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-        
-        
-	}
-	
-	
-	public void getPosts(String url) {
-		// Create a new HttpClient and Post Header
-		
-		GetJSONArrayTask JSONArrayTask = new GetJSONArrayTask();
-		JSONArrayTask.execute(url);
-		
-			/*HttpClient httpclient = new DefaultHttpClient();
-			HttpPost httppost = new HttpPost("http://10.100.31.21/cblue/getPostsFromDB.php");
-	    
-	        // Bind values with List
-	        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-	        nameValuePairs.add(new BasicNameValuePair("topic", topicString));
-	        
-	        // Encode values on URL entity
-	        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-	        
-	        // Execute HTTP Post, capture response
-	        HttpResponse response = httpclient.execute(httppost);
-	        
-	        // Begin to retrieve JSON data from server
-	        HttpEntity entity = response.getEntity();
-	        if (entity != null) {
-	            InputStream is = entity.getContent();
-	            BufferedReader reader = new BufferedReader(new InputStreamReader(is,"iso-8859-1"));
-	            // Use StringBuilder sb to acquire entire response as a String
-	            StringBuilder sb = new StringBuilder();
-				String line = null;
-				while ((line = reader.readLine()) != null) {
-					sb.append(line + "\n");
-				}
-				is.close();
-				
-				String result = sb.toString();
-				
-				/*
-				 *  Instantiate JSONArray with our String
-				 *  We now have the data in a JSONArray. We will use this JSONArray to populate TextViews
-				 *  with messages.
-				 */
-	            /*jArray = new JSONArray(result);
-	            
-				//Toast.makeText(getApplicationContext(), "" + jObject.getString("message"), Toast.LENGTH_LONG).show();
-				Log.e("log_tag", "JSON at 0: " + jArray.getString(0));
-				Log.e("log_tag", "JSON at 0: " + jArray.getString(1));
-	        }
-	        
-	    } catch (ClientProtocolException e) {
-	        // TODO Auto-generated catch block
-	    	e.printStackTrace();
-	    } catch (IOException e) {
-	        // TODO Auto-generated catch block
-	    	e.printStackTrace();
-	    } catch (JSONException e) {
-	    	e.printStackTrace();
-	    } catch (NullPointerException e) {
-	    	e.printStackTrace();
-	    }*/
 	}
 	
 	
@@ -175,16 +85,13 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
 	 * Take user's text from editText, and load it into correct topic table on server.
 	 * Then, reload current topic and redisplay posts, including the user's recent submission
 	 */
-	@Override
 	public void onClick(View chosen) {
-		Button chosenButton = (Button) chosen;
-		String buttonClicked = chosenButton.getText().toString().toLowerCase();
-		Toast.makeText(getApplicationContext(), "Clicked: " + buttonClicked, Toast.LENGTH_LONG).show();
+		Log.e("enter onClick", "Clicked id: " + chosen.getId());
 
-		if (buttonClicked.equals("home")) {
+		if (chosen == homeButton) {
 			Intent myIntentObject = new Intent(this, MainActivity.class);
 			this.startActivity(myIntentObject);	
-		} else if (buttonClicked.equals("submit")) {
+		} else if (chosen == submitButton) {
 			String userPost = textBox.getText().toString();
 			Toast.makeText(getApplicationContext(), "User Post: " + userPost, Toast.LENGTH_LONG).show();
 			
@@ -194,19 +101,22 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
 			InsertMessageTask insertTask = new InsertMessageTask();
 			insertTask.execute(insertUrl, userPost);
 			
+			// Now get latest entries
+			GetJSONArrayTask JSONArrayTask = new GetJSONArrayTask();
+	        JSONArrayTask.execute(getUrl);
+			
 			// clear the textBox
 			textBox.setText("");
-			
 		}
-		
 	}
+	
+	
 	
 	public static class GetJSONArrayTask extends AsyncTask<String, Integer, JSONArray>{
 		@Override
 		protected JSONArray doInBackground(String... params) {
-			// TODO Auto-generated method stub
+			// This gives us the url
 			String url = params[0];
-			
 			try {
 				HttpClient httpclient = new DefaultHttpClient();
 				HttpPost httppost = new HttpPost(url);
@@ -239,7 +149,7 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
 					/*
 					 *  Instantiate JSONArray with our String
 					 *  We now have the data in a JSONArray. We will use this JSONArray to populate TextViews
-					 *  with messages.
+					 *  with messages in onPostExecute.
 					 */
 		            jArray = new JSONArray(result);
 		        }
@@ -256,32 +166,42 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
 			return jArray;
 		}
 
-		protected void onPostExecute(JSONArray result) {
-	         //showDialog("Downloaded " + result + " bytes");
-			Log.e("log_tag", "JSONArray jArray: " + jArray.toString());
-			Log.e("log_tag", "JSONArray result: " + result.toString());
-			
+		protected void onPostExecute(JSONArray jsonResult) {
+			Log.e("Get Post", "JSONArray jArray: " + jArray.toString());
+			/*
+			 * Populate textfields with JSONArray result
+			 */
+			ArrayList<String> recentMessages = new ArrayList<String>();
+			ArrayList<String> recentDates = new ArrayList<String>();
 			try {
-				Log.e("log_tag", "JSONArray[0]: " + result.get(0));
-				text1.setText("" + jArray.get(0));
+				for(int i = 0; i < jsonResult.length(); i++) {
+					JSONObject post = jsonResult.getJSONObject(i);
+					String message = post.getString("content");
+					String date = post.getString("date_time");
+					recentMessages.add(message);
+					recentDates.add(date);
+				}
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			text1.setText("" + recentDates.get(0) + "\n" +  recentMessages.get(4));
+			text2.setText("" + recentDates.get(1) + "\n" +  recentMessages.get(3));
+			text3.setText("" + recentDates.get(2) + "\n" +  recentMessages.get(2));
+			text4.setText("" + recentDates.get(3) + "\n" +  recentMessages.get(1));
+			text5.setText("" + recentDates.get(4) + "\n" +  recentMessages.get(0));
 	     }
 	}
 	
 	
-	public static class InsertMessageTask extends AsyncTask<String, Integer, JSONArray>{
-
-		@Override
-		protected JSONArray doInBackground(String... params) {
-			// url specific to PHP insert file
+	
+	public static class InsertMessageTask extends AsyncTask<String, Integer, Void>{
+		protected Void doInBackground(String... params) {
+			// get the url for the correct handling script
 			String url = params[0];
-			// text which user typed into textBox
+			// get the text which user typed into textBox
 			String message = params[1];
 			
-			Log.e("log_tag", "params[1]: " + params[1]);
+			Log.e("Insert doInBackground", "params[1]: " + params[1]);
 
 			List<NameValuePair> values = new ArrayList<NameValuePair>();
 			values.add(new BasicNameValuePair("topic", topicString));
@@ -294,27 +214,20 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
 				httppost.setEntity(new UrlEncodedFormEntity(values));
 				httpclient.execute(httppost);
 			} catch (ClientProtocolException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			return jArray;
+			return null;
 		}
 
-
-		protected void onPostExecute(JSONArray result) {
-	         //showDialog("Downloaded " + result + " bytes");
+		protected void onPostExecute() {
+			Log.e("onPostExecute", "Entered onPostExecute");
 			/*
 			 * This is where we should use the JSONArray to populate the text fields
+			 * Currently, this task NOT going to the database to update the local jArray
 			 */
 	     }
-
-
-
 	}
 	
-	
-
 }
