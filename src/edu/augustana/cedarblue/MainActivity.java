@@ -51,7 +51,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 	public void onClick(View chosen) {
 		// TODO Auto-generated method stub
 		Button chosenButton = (Button) chosen;
-		String topicString = chosenButton.getText().toString().toLowerCase();
+		String topicString = chosenButton.getText().toString();
 		
 		Intent myIntentObject = new Intent(this, TopicBoardActivity.class);
 		myIntentObject.putExtra("topicString", topicString);

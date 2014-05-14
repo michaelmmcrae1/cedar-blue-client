@@ -80,7 +80,6 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
         
 	}
 	
-	
 	/*
 	 * Take user's text from editText, and load it into correct topic table on server.
 	 * Then, reload current topic and redisplay posts, including the user's recent submission
@@ -89,11 +88,11 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
 		Log.e("enter onClick", "Clicked id: " + chosen.getId());
 
 		if (chosen == homeButton) {
+			jArray = null;
 			Intent myIntentObject = new Intent(this, MainActivity.class);
 			this.startActivity(myIntentObject);	
 		} else if (chosen == submitButton) {
 			String userPost = textBox.getText().toString();
-			Toast.makeText(getApplicationContext(), "User Post: " + userPost, Toast.LENGTH_LONG).show();
 			
 			/*
 			 * insert the text in textBox to the database
@@ -123,11 +122,14 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
 		    
 		        // Bind values with List
 		        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-		        nameValuePairs.add(new BasicNameValuePair("topic", topicString));
+		        nameValuePairs.add(new BasicNameValuePair("topic", topicString.toLowerCase()));
+		        
+		        Log.d("Before httppost.setEntity", "Before httppost.setEntity");
 		        
 		        // Encode values on URL entity
 		        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 		        
+		        Log.d("May 14", "Before httpclient.execute");
 		        // Execute HTTP Post, capture response
 		        HttpResponse response = httpclient.execute(httppost);
 		        
@@ -139,12 +141,15 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
 		            // Use StringBuilder sb to acquire entire response as a String
 		            StringBuilder sb = new StringBuilder();
 					String line = null;
+					Log.d("May 14", "Entity is not null");
 					while ((line = reader.readLine()) != null) {
 						sb.append(line + "\n");
 					}
 					is.close();
 					
 					String result = sb.toString();
+					
+					Log.d("May 14", "Response from server: " + result);
 					
 					/*
 					 *  Instantiate JSONArray with our String
@@ -161,34 +166,40 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
 				e.printStackTrace();
 			} catch (JSONException e) {
 				e.printStackTrace();
-			} 
+			} catch (NullPointerException e) {
+				Log.d("NullPointerException", "Inside NullPointerException e");
+			}
 			// This jArray goes to onPostExecute
 			return jArray;
 		}
 
 		protected void onPostExecute(JSONArray jsonResult) {
-			Log.e("Get Post", "JSONArray jArray: " + jArray.toString());
+			Log.e("Get Post", "JSONArray jArray: " + jArray);
 			/*
 			 * Populate textfields with JSONArray result
-			 */
-			ArrayList<String> recentMessages = new ArrayList<String>();
-			ArrayList<String> recentDates = new ArrayList<String>();
-			try {
-				for(int i = 0; i < jsonResult.length(); i++) {
-					JSONObject post = jsonResult.getJSONObject(i);
-					String message = post.getString("content");
-					String date = post.getString("date_time");
-					recentMessages.add(message);
-					recentDates.add(date);
+			*/
+			if(jsonResult == null) {
+				
+			} else {
+				ArrayList<String> recentMessages = new ArrayList<String>();
+				ArrayList<String> recentDates = new ArrayList<String>();
+				try {
+					for(int i = 0; i < jsonResult.length(); i++) {
+						JSONObject post = jsonResult.getJSONObject(i);
+						String message = post.getString("content");
+						String date = post.getString("date_time");
+						recentMessages.add(message);
+						recentDates.add(date);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
 				}
-			} catch (JSONException e) {
-				e.printStackTrace();
+				text1.setText(recentDates.get(0) + "\n" +  recentMessages.get(4));
+				text2.setText(recentDates.get(1) + "\n" +  recentMessages.get(3));
+				text3.setText(recentDates.get(2) + "\n" +  recentMessages.get(2));
+				text4.setText(recentDates.get(3) + "\n" +  recentMessages.get(1));
+				text5.setText(recentDates.get(4) + "\n" +  recentMessages.get(0));
 			}
-			text1.setText("" + recentDates.get(0) + "\n" +  recentMessages.get(4));
-			text2.setText("" + recentDates.get(1) + "\n" +  recentMessages.get(3));
-			text3.setText("" + recentDates.get(2) + "\n" +  recentMessages.get(2));
-			text4.setText("" + recentDates.get(3) + "\n" +  recentMessages.get(1));
-			text5.setText("" + recentDates.get(4) + "\n" +  recentMessages.get(0));
 	     }
 	}
 	
@@ -204,7 +215,7 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
 			Log.e("Insert doInBackground", "params[1]: " + params[1]);
 
 			List<NameValuePair> values = new ArrayList<NameValuePair>();
-			values.add(new BasicNameValuePair("topic", topicString));
+			values.add(new BasicNameValuePair("topic", topicString.toLowerCase()));
 			values.add(new BasicNameValuePair("message", message));
 
 			HttpClient httpclient = new DefaultHttpClient();
@@ -223,10 +234,6 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
 
 		protected void onPostExecute() {
 			Log.e("onPostExecute", "Entered onPostExecute");
-			/*
-			 * This is where we should use the JSONArray to populate the text fields
-			 * Currently, this task NOT going to the database to update the local jArray
-			 */
 	     }
 	}
 	
