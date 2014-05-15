@@ -26,19 +26,18 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class TopicBoardActivity extends Activity implements View.OnClickListener {
-	public String getUrl = "http://10.100.31.21/cblue/getPostsFromDB.php";
-	public String insertUrl = "http://10.100.31.21/cblue/insertPostsIntoDB.php";
+	public String getUrl = "http://192.168.1.127/cblue/getPostsFromDB.php";
+	public String insertUrl = "http://192.168.1.127/cblue/insertPostsIntoDB.php";
 	public static JSONArray jArray;
 	public static String topicString;
+	public static TextView[] textFields;
 	public static TextView text1;
 	public static TextView text2;
 	public static TextView text3;
@@ -62,11 +61,21 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
         
         homeButton = (Button) findViewById(R.id.button2);
         submitButton = (Button) findViewById(R.id.button1);
+        
         text1 = (TextView) findViewById(R.id.textView1);
         text2 = (TextView) findViewById(R.id.textView2);
         text3 = (TextView) findViewById(R.id.textView3);
         text4 = (TextView) findViewById(R.id.textView4);
         text5 = (TextView) findViewById(R.id.textView5);
+        
+        textFields = new TextView[5];
+        
+        textFields[0] = text5;
+        textFields[1] = text4;
+        textFields[2] = text3;
+        textFields[3] = text2;
+        textFields[4] = text1;
+        
         header = (TextView) findViewById(R.id.textView6);
         textBox = (EditText) findViewById(R.id.editText1);
         
@@ -78,6 +87,10 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
         GetJSONArrayTask JSONArrayTask = new GetJSONArrayTask();
         JSONArrayTask.execute(getUrl);
         
+	}
+	
+	public void onPause() {
+		jArray = null;
 	}
 	
 	/*
@@ -194,11 +207,11 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-				text1.setText(recentDates.get(0) + "\n" +  recentMessages.get(4));
-				text2.setText(recentDates.get(1) + "\n" +  recentMessages.get(3));
-				text3.setText(recentDates.get(2) + "\n" +  recentMessages.get(2));
-				text4.setText(recentDates.get(3) + "\n" +  recentMessages.get(1));
-				text5.setText(recentDates.get(4) + "\n" +  recentMessages.get(0));
+				
+				for (int i = 0; i < recentMessages.size(); i++) {
+					textFields[i].setText(recentDates.get(i) + "\n" +  recentMessages.get(i));
+				}
+				
 			}
 	     }
 	}
