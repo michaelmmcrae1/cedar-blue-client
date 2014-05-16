@@ -30,6 +30,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 public class TopicBoardActivity extends Activity implements View.OnClickListener {
@@ -43,6 +44,7 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
 	public static TextView text3;
 	public static TextView text4;
 	public static TextView text5;
+	//public static ScrollView scroller;
 	public TextView header;
 	public EditText textBox;
 	public Button homeButton;
@@ -87,10 +89,6 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
         GetJSONArrayTask JSONArrayTask = new GetJSONArrayTask();
         JSONArrayTask.execute(getUrl);
         
-	}
-	
-	public void onPause() {
-		jArray = null;
 	}
 	
 	/*
