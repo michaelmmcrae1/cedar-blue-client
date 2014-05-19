@@ -34,8 +34,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 public class TopicBoardActivity extends Activity implements View.OnClickListener {
-	public String getUrl = "http://192.168.1.127/cblue/getPostsFromDB.php";
-	public String insertUrl = "http://192.168.1.127/cblue/insertPostsIntoDB.php";
+	public String getUrl = "http://192.168.1.126/cblue/getPostsFromDB.php";
+	public String insertUrl = "http://192.168.1.126/cblue/insertPostsIntoDB.php";
 	public static JSONArray jArray;
 	public static String topicString;
 	public static TextView[] textFields;
@@ -44,7 +44,7 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
 	public static TextView text3;
 	public static TextView text4;
 	public static TextView text5;
-	//public static ScrollView scroller;
+	public static ScrollView scroller;
 	public TextView header;
 	public EditText textBox;
 	public Button homeButton;
@@ -78,6 +78,18 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
         textFields[3] = text2;
         textFields[4] = text1;
         
+        scroller = (ScrollView) findViewById(R.id.ScrollView);
+        
+        /* This method is supposed to make the scroll bar default to the bottom
+         * but it doesn't seem to do anything for some reason
+         */
+        scroller.post(new Runnable() {
+            @Override
+            public void run() {
+                scroller.fullScroll(ScrollView.FOCUS_DOWN);
+            }
+        });
+        
         header = (TextView) findViewById(R.id.textView6);
         textBox = (EditText) findViewById(R.id.editText1);
         
@@ -105,9 +117,7 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
 		} else if (chosen == submitButton) {
 			String userPost = textBox.getText().toString();
 			
-			/*
-			 * insert the text in textBox to the database
-			 */
+			//insert the text in textBox to the database
 			InsertMessageTask insertTask = new InsertMessageTask();
 			insertTask.execute(insertUrl, userPost);
 			
@@ -139,8 +149,7 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
 		        
 		        // Encode values on URL entity
 		        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-		        
-		        Log.d("May 14", "Before httpclient.execute");
+
 		        // Execute HTTP Post, capture response
 		        HttpResponse response = httpclient.execute(httppost);
 		        
@@ -149,6 +158,7 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
 		        if (entity != null) {
 		            InputStream is = entity.getContent();
 		            BufferedReader reader = new BufferedReader(new InputStreamReader(is,"iso-8859-1"));
+		            
 		            // Use StringBuilder sb to acquire entire response as a String
 		            StringBuilder sb = new StringBuilder();
 					String line = null;
@@ -180,6 +190,7 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
 			} catch (NullPointerException e) {
 				Log.d("NullPointerException", "Inside NullPointerException e");
 			}
+			
 			// This jArray goes to onPostExecute
 			return jArray;
 		}
@@ -209,17 +220,18 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
 				for (int i = 0; i < recentMessages.size(); i++) {
 					textFields[i].setText(recentDates.get(i) + "\n" +  recentMessages.get(i));
 				}
-				
 			}
-	     }
+	    }
 	}
 	
 	
 	
 	public static class InsertMessageTask extends AsyncTask<String, Integer, Void>{
 		protected Void doInBackground(String... params) {
+			
 			// get the url for the correct handling script
 			String url = params[0];
+			
 			// get the text which user typed into textBox
 			String message = params[1];
 			
@@ -245,7 +257,6 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
 
 		protected void onPostExecute() {
 			Log.e("onPostExecute", "Entered onPostExecute");
-	     }
-	}
-	
+	    }
+	}	
 }

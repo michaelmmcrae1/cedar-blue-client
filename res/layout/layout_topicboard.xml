@@ -79,7 +79,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:textSize="15sp"
-            android:background="@+drawable/rounded_corner"
+            android:background="@+drawable/rounded_corner2"
             android:text="@string/hello_world" />
 
         <TextView
@@ -101,7 +101,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:textSize="15sp"
-            android:background="@+drawable/rounded_corner"
+            android:background="@+drawable/rounded_corner2"
             android:text="@string/hello_world" />
         
         <TextView
