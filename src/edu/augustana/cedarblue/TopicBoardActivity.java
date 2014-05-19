@@ -78,17 +78,19 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
         textFields[3] = text2;
         textFields[4] = text1;
         
-        scroller = (ScrollView) findViewById(R.id.ScrollView);
+        
+        //scroller = (ScrollView) findViewById(R.id.ScrollView);
         
         /* This method is supposed to make the scroll bar default to the bottom
          * but it doesn't seem to do anything for some reason
-         */
+         
         scroller.post(new Runnable() {
             @Override
             public void run() {
                 scroller.fullScroll(ScrollView.FOCUS_DOWN);
             }
         });
+        */
         
         header = (TextView) findViewById(R.id.textView6);
         textBox = (EditText) findViewById(R.id.editText1);
