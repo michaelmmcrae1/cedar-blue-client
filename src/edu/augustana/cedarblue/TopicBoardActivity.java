@@ -32,6 +32,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class TopicBoardActivity extends Activity implements View.OnClickListener {
 	public String getUrl = "http://192.168.1.126/cblue/getPostsFromDB.php";
@@ -60,6 +61,10 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
 	    // Get the topicString which tells us which topic we are in
 	    Bundle nameHashMap = this.getIntent().getExtras();
         topicString = nameHashMap.getString("topicString");
+        Toast.makeText(getApplicationContext(),
+			      "Here is string result from topicList " + topicString, Toast.LENGTH_LONG)
+			      .show();
+        Log.e("The topic String", topicString);
         
         homeButton = (Button) findViewById(R.id.button2);
         submitButton = (Button) findViewById(R.id.button1);

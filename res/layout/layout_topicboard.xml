@@ -18,6 +18,16 @@
         android:layout_alignLeft="@+id/ScrollView"
         android:layout_alignRight="@+id/ScrollView" >
    
+   <TextView
+        android:id="@+id/textView6"
+        android:layout_width="110dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="2.5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_gravity="left"
+        android:text="@+id/topicboard_header"
+        android:textColor="#E1E5E8"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
    <Button
         android:id="@+id/button2"
         android:layout_width="80dp"
@@ -28,18 +38,9 @@
         android:background="#E1E5E8"
         android:text="@string/home_button" />
 
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="110dp"
-        android:layout_height="30dp"
-        android:layout_marginTop="2.5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_gravity="left"
-        android:textColor="#E1E5E8"
-        android:text="MediumText"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+    
     </FrameLayout>
-
+   
     <ScrollView
         android:id="@+id/ScrollView"
         android:layout_width="500dp"
