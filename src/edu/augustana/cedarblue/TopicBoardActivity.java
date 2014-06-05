@@ -34,9 +34,17 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+// These packages are for testing WebSockets functionality.
+// WebSockets create a persistent/open TCP connection that will continually
+// notify the client when there are updates in the database.
+// This is an alternative to polling or AJAX.
+import de.tavendo.autobahn.WebSocketConnection;
+import de.tavendo.autobahn.WebSocketException;
+import de.tavendo.autobahn.WebSocketHandler;
+
 public class TopicBoardActivity extends Activity implements View.OnClickListener {
-	public String getUrl = "http://192.168.1.126/cblue/getPostsFromDB.php";
-	public String insertUrl = "http://192.168.1.126/cblue/insertPostsIntoDB.php";
+	public String getUrl = "http://192.168.0.107/cblue/getPostsFromDB.php";
+	public String insertUrl = "http://192.168.0.107/cblue/insertPostsIntoDB.php";
 	public static JSONArray jArray;
 	public static String topicString;
 	public static TextView[] textFields;
@@ -50,6 +58,41 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
 	public EditText textBox;
 	public Button homeButton;
 	public Button submitButton;
+	
+	// WebSockets variables
+	private static final String TAG = "de.tavendo.test1";
+
+	private final WebSocketConnection mConnection = new WebSocketConnection();
+	
+	
+	private void start() {
+
+	      final String wsuri = "ws://192.168.0.107:8080/cblue/src/MyApp/Chat.php";
+
+	      try {
+	         mConnection.connect(wsuri, new WebSocketHandler() {
+
+	            @Override
+	            public void onOpen() {
+	               Log.d(TAG, "Status: Connected to " + wsuri);
+	               mConnection.sendTextMessage("Hello, world!");
+	            }
+
+	            @Override
+	            public void onTextMessage(String payload) {
+	               Log.d(TAG, "Got echo: " + payload);
+	            }
+
+	            @Override
+	            public void onClose(int code, String reason) {
+	               Log.d(TAG, "Connection lost. " + reason);
+	            }
+	         });
+	      } catch (WebSocketException e) {
+
+	         Log.d(TAG, e.toString());
+	      }
+	}
 
 	/** Called when the activity is first created. */
 	@SuppressLint("NewApi")
@@ -108,7 +151,11 @@ public class TopicBoardActivity extends Activity implements View.OnClickListener
         GetJSONArrayTask JSONArrayTask = new GetJSONArrayTask();
         JSONArrayTask.execute(getUrl);
         
+        // Call WebSockets method for testing
+        start();
 	}
+	
+	
 	
 	/*
 	 * Take user's text from editText, and load it into correct topic table on server.
