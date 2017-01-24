@@ -1,0 +1,7 @@
+#Tue Jan 24 18:54:00 JST 2017
+base.0=/home/evan/workspace/CedarBlue/cedar-blue-client/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run-bootstrap_23da88ed65db5f3537b1a46bd2acb650ba70d228
+renamed.1=classes2.dex
+renamed.0=classes.dex
+file.1=/home/evan/workspace/CedarBlue/cedar-blue-client/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run_2ff161763509fe12c17d2ebcb5c1e0bc076fca5a/classes.dex
+base.1=/home/evan/workspace/CedarBlue/cedar-blue-client/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run_2ff161763509fe12c17d2ebcb5c1e0bc076fca5a
+file.0=/home/evan/workspace/CedarBlue/cedar-blue-client/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run-bootstrap_23da88ed65db5f3537b1a46bd2acb650ba70d228/classes.dex

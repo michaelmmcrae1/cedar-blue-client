@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity implements View.OnClickListener {
 	public ListView topicList;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

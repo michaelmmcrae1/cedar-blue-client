@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "/home/evan/workspace/CedarBlue/cedar-blue-client/build/intermediates/res/merged/debug/drawable-hdpi-v4/topicboard_header.xml",
+        "source": "/home/evan/workspace/CedarBlue/cedar-blue-client/res/drawable-hdpi/topicboard_header.xml"
+    },
+    {
+        "merged": "/home/evan/workspace/CedarBlue/cedar-blue-client/build/intermediates/res/merged/debug/drawable-hdpi-v4/rounded_corner.xml",
+        "source": "/home/evan/workspace/CedarBlue/cedar-blue-client/res/drawable-hdpi/rounded_corner.xml"
+    },
+    {
+        "merged": "/home/evan/workspace/CedarBlue/cedar-blue-client/build/intermediates/res/merged/debug/drawable-hdpi-v4/rounded_corner2.xml",
+        "source": "/home/evan/workspace/CedarBlue/cedar-blue-client/res/drawable-hdpi/rounded_corner2.xml"
+    }
+]

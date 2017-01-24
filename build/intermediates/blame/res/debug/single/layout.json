@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "/home/evan/workspace/CedarBlue/cedar-blue-client/build/intermediates/res/merged/debug/layout/layout_topicboard.xml",
+        "source": "/home/evan/workspace/CedarBlue/cedar-blue-client/res/layout/layout_topicboard.xml"
+    },
+    {
+        "merged": "/home/evan/workspace/CedarBlue/cedar-blue-client/build/intermediates/res/merged/debug/layout/activity_main.xml",
+        "source": "/home/evan/workspace/CedarBlue/cedar-blue-client/res/layout/activity_main.xml"
+    }
+]
